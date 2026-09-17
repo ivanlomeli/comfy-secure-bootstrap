@@ -53,6 +53,8 @@ sudo -E ./bootstrap.sh
 
 ## ¿Qué instala exactamente?
 
+### Fase 1 — Baseline (siempre corre)
+
 | Script | Qué hace |
 |---|---|
 | `00-baseline.sh` | UFW, sshd hardening (puerto 2222 temporal, algoritmos modernos, keys-only), fail2ban, unattended-upgrades, purga servicios innecesarios |
@@ -64,6 +66,26 @@ sudo -E ./bootstrap.sh
 | `60-cve-mitigations.sh` | Parches puntuales sudo/glibc/kernel/openssh/snapd, bloquea SSRF a IMDS 169.254.169.254, purga snapd si no se usa, protege Redis local |
 | `90-lock-down.sh` | Cierra 2222, sshd solo en 10.7.0.1:22 dentro del túnel |
 | `99-verify.sh` | ss, ufw status, wg show, servicios, lynis, SUID audit |
+
+### Fase 2 — Hardening profundo (opcional; `ENABLE_PHASE2=1`, default ON)
+
+| Script | Qué hace |
+|---|---|
+| `70-comfyui-sandbox.sh` | Usuario `comfyui` dedicado sin sudo, systemd sandbox strict (ProtectSystem, NoNewPrivileges, RestrictAddressFamilies), remonta /tmp con nosuid/nodev/noexec |
+| `71-egress-filter.sh` | UFW/iptables OUTPUT deny-all + allowlist a Ubuntu/PyPI/HF/GitHub/NVIDIA/AWS. Modo `warn` primero, luego `enforce` |
+| `72-aide-fim.sh` | AIDE baseline post-install + cron diario con alertas SNS |
+| `73-wazuh-agent.sh` | Agente Wazuh SIEM/EDR (solo si `WAZUH_MANAGER` set) |
+| `74-apparmor-profiles.sh` | Perfil AppArmor custom para el python de ComfyUI (deny /root, /etc/shadow, /etc/ssh, /etc/wireguard) |
+| `75-auditd-full.sh` | Reglas STIG completas: execve, ptrace, mount, kexec, cambios de red/PAM/cron/systemd, ejecución desde /tmp |
+| `76-pam-hardening.sh` | pam_pwquality, pam_faillock (5 intentos → 15 min lock), TOTP opcional en sudo |
+| `77-kernel-lockdown.sh` | GRUB `lockdown=confidentiality`, `modules_disabled=1` diferido 15 min, blacklist de LKMs raros (cramfs, dccp, sctp, firewire, bluetooth) |
+| `78-log-forwarding.sh` | CloudWatch Logs / Loki / rsyslog remoto (condicional a env vars) |
+| `79-integrity-verify.sh` | `pip-audit` en el venv, verificación SHA256 de modelos vs MANIFEST, allowlist de custom nodes, advertencia sobre pickle |
+| `80-backups.sh` | AWS Backup diario (via consola) + restic → S3 cifrado (si `RESTIC_REPOSITORY` set) |
+
+### Amenazas cubiertas y no cubiertas
+
+Ver [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) para un desglose honesto.
 
 ## Documentación
 
