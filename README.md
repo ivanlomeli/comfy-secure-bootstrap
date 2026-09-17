@@ -93,7 +93,10 @@ Ver [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) para un desglose honesto.
 - [`docs/AWS-USER-DATA.md`](docs/AWS-USER-DATA.md) — cómo usar el bootstrap desde user-data + Security Group + IMDSv2.
 - [`docs/WIREGUARD-CLIENT.md`](docs/WIREGUARD-CLIENT.md) — instalar el cliente en Mac, iOS, Android, Linux.
 - [`docs/COMFYUI-USAGE.md`](docs/COMFYUI-USAGE.md) — cómo acceder a ComfyUI vía SSH tunnel local.
+- [`docs/GRAPHICAL-ACCESS.md`](docs/GRAPHICAL-ACCESS.md) — acceso gráfico: SSH tunnel (recomendado) vs xrdp vs SSHFS.
 - [`docs/CVES.md`](docs/CVES.md) — CVEs monitoreados y sus mitigaciones.
+- [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) — qué cubre y qué NO cubre este stack.
+- [`preload/`](preload/) — scripts para preinstalar custom nodes y descargar modelos populares tras el bootstrap.
 
 ## Contribuir
 
