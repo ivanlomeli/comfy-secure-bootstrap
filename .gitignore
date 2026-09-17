@@ -1,0 +1,7 @@
+*.log
+*.swp
+.DS_Store
+# Never commit keys
+*.key
+*.pub
+*.conf.local
